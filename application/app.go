@@ -21,10 +21,12 @@ func NewApp() *App {
 		Addr:     "localhost:6379",
 		Password: redisPassword,
 	})
-	return &App{
-		router: loadRoutes(),
-		rdb:    rdb,
+
+	app := &App{
+		rdb: rdb,
 	}
+	app.loadRoutes()
+	return app
 }
 
 func (a *App) Start(ctx context.Context) error {

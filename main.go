@@ -11,7 +11,7 @@ import (
 
 func main() {
 	godotenv.Load(".env")
-	app := application.NewApp()
+	app := application.NewApp(application.LoadConfig())
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 	err := app.Start(ctx)

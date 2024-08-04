@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,17 +12,18 @@ import (
 type App struct {
 	router http.Handler
 	rdb    *redis.Client
+	config Config
 }
 
-func NewApp() *App {
-	redisPassword := os.Getenv("REDIS_PASSWORD")
+func NewApp(config Config) *App {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: redisPassword,
+		Addr:     config.RedisAddr,
+		Password: config.RedisPass,
 	})
 
 	app := &App{
-		rdb: rdb,
+		rdb:    rdb,
+		config: config,
 	}
 	app.loadRoutes()
 	return app
@@ -31,7 +31,7 @@ func NewApp() *App {
 
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", a.config.ServerPort),
 		Handler: a.router,
 	}
 	err := a.rdb.Ping(ctx).Err()

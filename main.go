@@ -1,26 +1,15 @@
 package main
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/Lutefd/gorders-api/application"
 )
 
 func main() {
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
-	router.Get("/hello", hello)
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
-	}
-	err := server.ListenAndServe()
+	app := application.NewApp()
+	err := app.Start(context.TODO())
 	if err != nil {
 		panic(err)
 	}
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
 }
